@@ -26,11 +26,17 @@
     box-shadow: 0 8px 30px rgba(0,0,0,0.5);
   }
 
+  .start {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 10px;
+  }
+
   #counter {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: bold;
     margin-bottom: 20px;
-    letter-spacing: 1px;
+    line-height: 1.6;
   }
 
   .message {
@@ -40,45 +46,59 @@
   }
 
   @media (max-width: 500px) {
-    #counter {
-      font-size: 24px;
-    }
-    .message {
-      font-size: 16px;
-    }
+    #counter { font-size: 24px; }
+    .message { font-size: 16px; }
+    .start { font-size: 16px; }
   }
 </style>
 </head>
 
 <body>
 <div class="container">
+  <div class="start">من هنا ابتدت أجمل حكاية — 06/12/2025</div>
   <div id="counter">جاري الحساب...</div>
   <div class="message">الزمن بيعد… وأنا ثابت عندك</div>
 </div>
 
 <script>
-const startDate = new Date("2025-12-03T00:00:00");
+const start = new Date("2025-12-06T00:00:00");
 
-function updateCounter() {
-    const now = new Date();
-    const diff = now - startDate;
+function update(){
+  const now = new Date();
 
-    const seconds = Math.floor(diff / 1000) % 60;
-    const minutes = Math.floor(diff / (1000 * 60)) % 60;
-    const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const years = Math.floor(days / 365);
+  let years = now.getFullYear() - start.getFullYear();
+  let months = now.getMonth() - start.getMonth();
+  let days = now.getDate() - start.getDate();
+  let hours = now.getHours() - start.getHours();
+  let minutes = now.getMinutes() - start.getMinutes();
+  let seconds = now.getSeconds() - start.getSeconds();
 
-    document.getElementById("counter").innerHTML =
-        years + " سنة • " +
-        days + " يوم • " +
-        hours + " ساعة • " +
-        minutes + " دقيقة • " +
-        seconds + " ثانية";
+  if (seconds < 0){ seconds += 60; minutes--; }
+  if (minutes < 0){ minutes += 60; hours--; }
+  if (hours < 0){ hours += 24; days--; }
+
+  if (days < 0){
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+    days += prevMonth;
+    months--;
+  }
+
+  if (months < 0){
+    months += 12;
+    years--;
+  }
+
+  document.getElementById("counter").innerHTML =
+    years + " سنة<br>" +
+    months + " شهر<br>" +
+    days + " يوم<br>" +
+    hours + " ساعة<br>" +
+    minutes + " دقيقة<br>" +
+    seconds + " ثانية";
 }
 
-setInterval(updateCounter, 1000);
-updateCounter();
+setInterval(update,1000);
+update();
 </script>
 </body>
 </html>
